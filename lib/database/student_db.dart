@@ -14,7 +14,7 @@ class StudentDB {
   StudentDB.privateConst();
 
   static const String tableName = "student";
-  static const String dbName = "student1.db";
+  static const String dbName = "student2.db";
 
   static late Database _database;
 
@@ -41,6 +41,8 @@ class StudentDB {
         ${StudentDBConstants.department} TEXT,
         ${StudentDBConstants.matricNumber} TEXT NOT NULL,
         ${StudentDBConstants.fullName} TEXT,
+        ${StudentDBConstants.supervisorId} TEXT,
+        ${StudentDBConstants.placementId} TEXT,
         ${StudentDBConstants.password} TEXT NOT NULL,
         ${StudentDBConstants.displayImagePath} TEXT
         )
@@ -87,6 +89,62 @@ class StudentDB {
     List<Map> students = await db.query(tableName);
     for (var student in students) {
       listOfStudents.add(Student.fromMap(student));
+    }
+
+    return listOfStudents;
+  }
+
+  Future<List<Student>> getAllStudentsWithPlacement(String placementId) async {
+    List<Student> listOfStudents = [];
+    Database db = await instance.database;
+    List<Map> students = await db.query(tableName, where:
+    '${StudentDBConstants.placementId} = ?',
+        whereArgs: [placementId]);
+
+    for (var student in students) {
+      listOfStudents.add(Student.fromMap(student));
+    }
+
+    return listOfStudents;
+  }
+
+  Future<List<Student>> getAllStudentsWithoutPlacement() async {
+    List<Student> listOfStudents = [];
+    Database db = await instance.database;
+    List<Map> students = await db.query(tableName);
+
+    for (var student in students) {
+      if(student['placementId'] == null) {
+        listOfStudents.add(Student.fromMap(student));
+      }
+    }
+
+    return listOfStudents;
+  }
+
+  Future<List<Student>> getAllStudentsWithSupervisor(String supervisorId) async {
+    List<Student> listOfStudents = [];
+    Database db = await instance.database;
+    List<Map> students = await db.query(tableName, where:
+    '${StudentDBConstants.supervisorId} = ?',
+        whereArgs: [supervisorId]);
+
+    for (var student in students) {
+      listOfStudents.add(Student.fromMap(student));
+    }
+
+    return listOfStudents;
+  }
+
+  Future<List<Student>> getAllStudentsWithoutSupervisor() async {
+    List<Student> listOfStudents = [];
+    Database db = await instance.database;
+    List<Map> students = await db.query(tableName);
+
+    for (var student in students) {
+      if(student['supervisorId'] == null) {
+        listOfStudents.add(Student.fromMap(student));
+      }
     }
 
     return listOfStudents;

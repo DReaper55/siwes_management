@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:siwes_management/database/lecturer_db.dart';
 
-import '../../models/lecturer.dart';
-import '../../utils/display_snackbar.dart';
-import '../../utils/preference_constants.dart';
+import '../../../models/lecturer.dart';
+import '../../../utils/display_snackbar.dart';
+import '../../../utils/preference_constants.dart';
 import '../lecturer_home_page.dart';
 
 class LecturerSignUp extends StatelessWidget {

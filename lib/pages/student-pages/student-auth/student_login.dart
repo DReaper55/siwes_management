@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:siwes_management/database/student_db.dart';
 
-import '../../database/lecturer_db.dart';
-import '../../utils/display_snackbar.dart';
-import '../../utils/preference_constants.dart';
-import '../lecturer_home_page.dart';
-import 'lecturer_sign_up.dart';
+import '../../../utils/display_snackbar.dart';
+import '../../../utils/preference_constants.dart';
+import 'student_sign_up.dart';
+import '../student_home_page.dart';
 
-class LecturerLogin extends StatelessWidget {
-  const LecturerLogin({Key? key}) : super(key: key);
+class StudentLogin extends StatelessWidget {
+  const StudentLogin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final staffNumber = TextEditingController();
+    final matricNumber = TextEditingController();
     final password = TextEditingController();
 
     bool isTextObscure = true;
@@ -49,11 +49,14 @@ class LecturerLogin extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * .9,
                         margin: const EdgeInsets.fromLTRB(20, 0.0, 20.0, 0.0),
                         child: TextFormField(
-                          controller: staffNumber,
+                          controller: matricNumber,
                           style: const TextStyle(fontSize: 18.0),
-                          keyboardType: TextInputType.emailAddress,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                              labelText: "Enter staff number",
+                              labelText: "Enter Matric/Reg number",
+                              errorText: matricNumber.text.isNotEmpty
+                                  ? "Cannot be empty"
+                                  : null,
                               floatingLabelBehavior: FloatingLabelBehavior.auto,
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0))),
@@ -95,7 +98,7 @@ class LecturerLogin extends StatelessWidget {
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
 
-                            if(staffNumber.text.isEmpty
+                            if(matricNumber.text.isEmpty
                                 || password.text.isEmpty){
                               return;
                             }
@@ -104,13 +107,13 @@ class LecturerLogin extends StatelessWidget {
                               isLoginIn = true;
                             });
 
-                            LecturerDB.instance.authenticateUser(staffNumber.text, password.text)
+                            StudentDB.instance.authenticateUser(matricNumber.text, password.text)
                                 .then((isExist) {
                               if(isExist){
-                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => const LecturerHomepage()));
+                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) => const StudentHomepage()));
 
                                 SharedPreferences.getInstance().then((preferences) {
-                                  preferences.setString(SharedPrefConstants.STAFF_NUMBER, staffNumber.text);
+                                  preferences.setString(SharedPrefConstants.MATRIC_NUMBER, matricNumber.text);
                                 });
 
                               } else {
@@ -146,7 +149,7 @@ class LecturerLogin extends StatelessWidget {
                             TextButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (ctx) => const LecturerSignUp()));
+                                      builder: (ctx) => const StudentSignUp()));
 
                                   isLoginIn = false;
 

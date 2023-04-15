@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:siwes_management/main.dart';
 
+import 'lecturer-placement-page/lecturer_placement_page.dart';
+import 'lecturer-supervisor-page/lecturer_supervisor_page.dart';
 import 'lecturer_profile_page.dart';
-import '../utils/preference_constants.dart';
+import '../../utils/preference_constants.dart';
 
 class LecturerHomepage extends StatelessWidget {
   const LecturerHomepage({super.key});
@@ -53,7 +55,7 @@ class LecturerHomepage extends StatelessWidget {
                       side: MaterialStateProperty.all(BorderSide(color: Theme.of(context).primaryColor)),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))
                   ),
-                  onPressed: (){},
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const LecturerPlacementPage())),
                   child: const Text(
                     "Placement Allocations",
                     style: TextStyle(
@@ -76,7 +78,7 @@ class LecturerHomepage extends StatelessWidget {
                       side: MaterialStateProperty.all(BorderSide(color: Theme.of(context).primaryColor)),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))
                   ),
-                  onPressed: (){},
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const LecturerSupervisorPage())),
                   child: const Text(
                     "Supervisor Allocations",
                     style: TextStyle(

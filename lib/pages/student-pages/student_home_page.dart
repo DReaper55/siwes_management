@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:siwes_management/main.dart';
 
+import 'it-log-page/it_log_page.dart';
+import 'it_info_page.dart';
 import 'student_profile_page.dart';
-import '../utils/preference_constants.dart';
+import '../../utils/preference_constants.dart';
 
 class StudentHomepage extends StatelessWidget {
   const StudentHomepage({super.key});
@@ -52,7 +54,7 @@ class StudentHomepage extends StatelessWidget {
                     side: MaterialStateProperty.all(BorderSide(color: Theme.of(context).primaryColor)),
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))
                 ),
-                onPressed: (){},
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const ITLogPage())),
                 child: const Text(
                   "IT Logs",
                   style: TextStyle(
@@ -64,7 +66,7 @@ class StudentHomepage extends StatelessWidget {
             ),
 
             // ....................................
-            // Scores
+            // IT Info
             // ....................................
             Container(
               margin: const EdgeInsets.only(top: 50.0),
@@ -75,9 +77,9 @@ class StudentHomepage extends StatelessWidget {
                   side: MaterialStateProperty.all(BorderSide(color: Theme.of(context).primaryColor)),
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))
                 ),
-                onPressed: (){},
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const ITInfoPage())),
                 child: const Text(
-                  "Scores",
+                  "IT Info",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

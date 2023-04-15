@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../database/student_db.dart';
-import '../../models/student.dart';
-import '../../utils/display_snackbar.dart';
-import '../../utils/preference_constants.dart';
+import '../../../database/student_db.dart';
+import '../../../models/student.dart';
+import '../../../utils/display_snackbar.dart';
+import '../../../utils/preference_constants.dart';
 import '../student_home_page.dart';
 
 class StudentSignUp extends StatelessWidget {

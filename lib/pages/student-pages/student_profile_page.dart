@@ -3,48 +3,48 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:siwes_management/models/student.dart';
 
-import '../database/lecturer_db.dart';
-import '../models/lecturer.dart';
-import '../utils/display_snackbar.dart';
-import '../utils/preference_constants.dart';
+import '../../database/student_db.dart';
+import '../../utils/display_snackbar.dart';
+import '../../utils/preference_constants.dart';
 
-class LecturerProfilePage extends StatefulWidget {
-  const LecturerProfilePage({Key? key}) : super(key: key);
+class StudentProfilePage extends StatefulWidget {
+  const StudentProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<LecturerProfilePage> createState() => _LecturerProfilePageState();
+  State<StudentProfilePage> createState() => _StudentProfilePageState();
 }
 
-class _LecturerProfilePageState extends State<LecturerProfilePage> {
-  final staffIdCtrl = TextEditingController();
+class _StudentProfilePageState extends State<StudentProfilePage> {
+  final matricNumberCtrl = TextEditingController();
   final facultyCtrl = TextEditingController();
   final departmentCtrl = TextEditingController();
   final fullNameCtrl = TextEditingController();
 
   SharedPreferences? _preferences;
 
-  Lecturer? lecturer;
+  Student? student;
 
   @override
   void initState() {
-    _getLecturerData();
+    _getStudentData();
     super.initState();
   }
 
-  _getLecturerData() async {
+  _getStudentData() async {
     _preferences = await SharedPreferences.getInstance();
 
-    String? staffId = _preferences!.getString(SharedPrefConstants.STAFF_NUMBER);
+    String? matric = _preferences!.getString(SharedPrefConstants.MATRIC_NUMBER);
 
-    if (staffId != null) {
-      staffIdCtrl.text = staffId;
+    if (matric != null) {
+      matricNumberCtrl.text = matric;
 
-      lecturer = await LecturerDB.instance.getOneLecturer(staffId);
+      student = await StudentDB.instance.getOneStudent(matric);
 
-      fullNameCtrl.text = lecturer!.fullName ?? '';
-      facultyCtrl.text = lecturer!.faculty ?? '';
-      departmentCtrl.text = lecturer!.department ?? '';
+      fullNameCtrl.text = student!.fullName ?? '';
+      facultyCtrl.text = student!.faculty ?? '';
+      departmentCtrl.text = student!.department ?? '';
     }
 
     setState(() {
@@ -71,18 +71,30 @@ class _LecturerProfilePageState extends State<LecturerProfilePage> {
       appBar: AppBar(title: const Text('Profile'),),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Lecturer mLecturer = Lecturer(
-            staffId: staffIdCtrl.text,
+          Student mStudent = Student(
+            matricNumber: matricNumberCtrl.text,
             fullName: fullNameCtrl.text,
             department: departmentCtrl.text,
             faculty: facultyCtrl.text,
           );
 
           if(_image != null){
-            mLecturer.displayImagePath = _image!.path;
+            mStudent.displayImagePath = _image!.path;
           }
 
-          await LecturerDB.instance.updateLecturer(mLecturer, staffIdCtrl.text);
+          Student studentDB = await StudentDB.instance.getOneStudent(matricNumberCtrl.text);
+
+          if(studentDB.matricNumber != null){
+            studentDB.fullName = studentDB.fullName;
+            studentDB.department = studentDB.department;
+            studentDB.faculty = studentDB.faculty;
+            studentDB.displayImagePath = studentDB.displayImagePath;
+
+            await StudentDB.instance.updateStudent(mStudent, matricNumberCtrl.text);
+
+          } else {
+            await StudentDB.instance.insert(mStudent);
+          }
 
           if(mounted) {
             displaySnackBar(context, message: 'Saved details');
@@ -101,14 +113,14 @@ class _LecturerProfilePageState extends State<LecturerProfilePage> {
                   children: [
                     CircleAvatar(
                         radius: 70.0,
-                        backgroundImage: lecturer != null && lecturer!.displayImagePath != null &&
+                        backgroundImage: student != null && student!.displayImagePath != null &&
                             _image == null
-                            ? FileImage(File(lecturer!.displayImagePath!))
+                            ? FileImage(File(student!.displayImagePath!))
                             : _image != null ? FileImage(
                             _image!) as ImageProvider : null,
-                        child: lecturer != null && lecturer!.displayImagePath == null && lecturer!.fullName != null && _image == null
+                        child: student != null && student!.displayImagePath == null && student!.fullName != null && _image == null
                             ? Text(
-                          lecturer!.fullName![0].toUpperCase(),
+                          student!.fullName![0].toUpperCase(),
                           style:
                           const TextStyle(color: Colors.white),
                         )
@@ -136,18 +148,18 @@ class _LecturerProfilePageState extends State<LecturerProfilePage> {
               ),
 
               // ...................................
-              // Staff number
+              // Matric number
               // ...................................
               Container(
                 width: MediaQuery.of(context).size.width * .9,
                 margin: const EdgeInsets.fromLTRB(20, 30.0, 20.0, 0.0),
                 child: TextFormField(
-                  controller: staffIdCtrl,
+                  controller: matricNumberCtrl,
                   style: const TextStyle(fontSize: 18.0),
                   readOnly: true,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                      labelText: "Staff number",
+                      labelText: "Matric/Reg number",
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0))),

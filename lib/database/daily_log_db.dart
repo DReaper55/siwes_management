@@ -4,17 +4,17 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../models/lecturer.dart';
+import '../models/daily_log.dart';
 import '../utils/database_constants.dart';
 
-class LecturerDB {
-  LecturerDB.privateConst();
+class DailyLogDB {
+  DailyLogDB.privateConst();
 
-  static final LecturerDB instance =
-  LecturerDB.privateConst();
+  static final DailyLogDB instance =
+  DailyLogDB.privateConst();
 
-  static const String tableName = "lecturer";
-  static const String dbName = "lecturer1.db";
+  static const String tableName = "daily_log";
+  static const String dbName = "daily_log0.db";
 
   static late Database _database;
 
@@ -37,25 +37,23 @@ class LecturerDB {
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE $tableName (
-        ${LecturerDBConstants.faculty} TEXT,
-        ${LecturerDBConstants.department} TEXT,
-        ${LecturerDBConstants.staffId} TEXT NOT NULL,
-        ${LecturerDBConstants.fullName} TEXT,
-        ${LecturerDBConstants.password} TEXT NOT NULL,
-        ${LecturerDBConstants.displayImagePath} TEXT
+        ${DailyLogDBConstants.logId} TEXT NOT NULL,
+        ${DailyLogDBConstants.dateTime} TEXT,
+        ${DailyLogDBConstants.weekId} INTEGER,
+        ${DailyLogDBConstants.entry} TEXT
         )
         ''');
       },
     );
   }
 
-  Future<Lecturer> insert(
-      Lecturer lecturer) async {
+  Future<DailyLog> insert(
+      DailyLog dailyLog) async {
     Database db = await instance.database;
 
     try {
       await db.transaction((txn) async {
-        await txn.insert(tableName, lecturer.toMap());
+        await txn.insert(tableName, dailyLog.toMap());
       });
     } catch (e) {
       // Handle error
@@ -63,61 +61,60 @@ class LecturerDB {
 
     // await _removeDuplicatesFromDB();
 
-    return lecturer;
+    return dailyLog;
   }
 
-  Future<Lecturer> getOneLecturer(
-      String staffId) async {
+  Future<DailyLog> getOneDailyLog(
+      String logId) async {
     Database db = await instance.database;
-    List<Map> lecturerList = await db.query(tableName,
+    List<Map> dailyLogList = await db.query(tableName,
         where:
-        '${LecturerDBConstants.staffId} = ?',
-        whereArgs: [staffId]);
+        '${DailyLogDBConstants.logId} = ?',
+        whereArgs: [logId]);
 
-    if (lecturerList.isNotEmpty) {
-      return Lecturer.fromMap(lecturerList.first);
+    if (dailyLogList.isNotEmpty) {
+      return DailyLog.fromMap(dailyLogList.first);
     } else {
-      return Future.value(Lecturer());
+      return Future.value(DailyLog());
     }
   }
 
-  Future<List<Lecturer>> getAllLecturers() async {
-    List<Lecturer> listOfLecturers = [];
+  Future<List<DailyLog>> getAllDailyLogs() async {
+    List<DailyLog> listOfDailyLogs = [];
     Database db = await instance.database;
-    List<Map> lecturers = await db.query(tableName);
-    for (var lecturer in lecturers) {
-      listOfLecturers.add(Lecturer.fromMap(lecturer));
+    List<Map> dailyLogs = await db.query(tableName);
+    for (var dailyLog in dailyLogs) {
+      listOfDailyLogs.add(DailyLog.fromMap(dailyLog));
     }
 
-    return listOfLecturers;
+    return listOfDailyLogs;
   }
 
-  Future<bool> authenticateUser(String staffId, String password) async {
+  Future<List<DailyLog>> getSomeDailyLogs(int weekId) async {
+    List<DailyLog> listOfDailyLogs = [];
     Database db = await instance.database;
-    List<Map> studentList = await db.query(tableName,
-        where:
-        '${LecturerDBConstants.staffId} = ? AND ${StudentDBConstants.password} = ?',
-        whereArgs: [staffId, password]);
+    List<Map> dailyLogs = await db.query(tableName, where:
+    '${DailyLogDBConstants.weekId} = ?',
+        whereArgs: [weekId]);
 
-    if (studentList.isNotEmpty) {
-      return Future.value(true);
-    } else {
-      return Future.value(false);
+    for (var dailyLog in dailyLogs) {
+      listOfDailyLogs.add(DailyLog.fromMap(dailyLog));
     }
+
+    return listOfDailyLogs;
   }
 
-
-  Future<int> updateLecturer(
-      Lecturer lecturer, String staffId) async {
+  Future<int> updateDailyLog(
+      DailyLog dailyLog, String logId) async {
     Database db = await instance.database;
 
     try {
       return await db.transaction((txn) async {
-        return await txn.update(tableName, lecturer.toMap(),
+        return await txn.update(tableName, dailyLog.toMap(),
             where:
-            '${LecturerDBConstants.staffId} = ?',
+            '${DailyLogDBConstants.logId} = ?',
             whereArgs: [
-              staffId
+              logId
             ]);
       });
     } catch (e) {
@@ -126,16 +123,16 @@ class LecturerDB {
     }
   }
 
-  Future<int> deleteLecturer(
-      String staffId) async {
+  Future<int> deleteDailyLog(
+      String logId) async {
     Database db = await instance.database;
 
     try {
       return await db.transaction((txn) async {
         return await txn.delete(tableName,
             where:
-            '${LecturerDBConstants.staffId} = ?',
-            whereArgs: [staffId]);
+            '${DailyLogDBConstants.logId} = ?',
+            whereArgs: [logId]);
       });
     } catch (e) {
       // Handle error
@@ -143,7 +140,7 @@ class LecturerDB {
     }
   }
 
-  Future<int> clearLecturerRecords() async {
+  Future<int> clearDailyLogRecords() async {
     Database db = await instance.database;
 
     try {

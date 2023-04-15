@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:siwes_management/pages/student_home_page.dart';
+import 'package:siwes_management/pages/student-pages/student_home_page.dart';
 
-import '../pages/lecturer-auth/lecturer_login.dart';
-import '../pages/student-auth/student_login.dart';
-import 'pages/lecturer_home_page.dart';
+import 'pages/lecturer-pages/lecturer-auth/lecturer_login.dart';
+import 'pages/student-pages/student-auth/student_login.dart';
+import 'pages/lecturer-pages/lecturer_home_page.dart';
 import 'utils/preference_constants.dart';
 
 void main() {
